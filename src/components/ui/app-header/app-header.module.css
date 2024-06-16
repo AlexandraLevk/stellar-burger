@@ -22,6 +22,7 @@
 
 .link_active {
   color: var(--text-primary-color);
+  pointer-events: none;
 }
 
 .link_position_last {
