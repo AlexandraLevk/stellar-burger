@@ -10,6 +10,19 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { deleteCookie, setCookie, getCookie } from '../utils/cookie';
 
+export const checkUserAuth = createAsyncThunk(
+  'auth/checkUserAuth',
+  async (_, { dispatch }) => {
+    if (getCookie('accessToken')) {
+      getUserApi()
+        .then((res) => dispatch(userSlice.actions.setUser(res.user)))
+        .finally(() => dispatch(setAuthChecked(true)));
+    } else {
+      dispatch(setAuthChecked(true));
+    }
+  }
+);
+
 export const registerUser = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }: TRegisterData) => {
@@ -84,6 +97,12 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(checkUserAuth.rejected, (state, action) => {
+        state.loginUserError = action.error.message;
+        state.isAuthChecked = true;
+        deleteCookie('accessToken');
+        localStorage.removeItem('refreshToken');
+      })
       .addCase(loginUser.pending, (state) => {
         state.loginUserRequest = true;
         state.loginUserError = null;
@@ -136,22 +155,22 @@ export const userSlice = createSlice({
   }
 });
 
-export const checkUserAuth = createAsyncThunk(
-  'auth/checkUserAuth',
-  async (_, { dispatch }) => {
-    if (getCookie('accessToken')) {
-      getUserApi()
-        .then((res) => dispatch(userSlice.actions.setUser(res.user)))
-        .catch(() => {
-          deleteCookie('accessToken');
-          localStorage.removeItem('refreshToken');
-        })
-        .finally(() => dispatch(userSlice.actions.setAuthChecked(true)));
-    } else {
-      dispatch(userSlice.actions.setAuthChecked(true));
-    }
-  }
-);
+// export const checkUserAuth = createAsyncThunk(
+//   'auth/checkUserAuth',
+//   async (_, { dispatch }) => {
+//     if (getCookie('accessToken')) {
+//       getUserApi()
+//         // .then((res) => dispatch(userSlice.actions.setUser(res.user)))
+//         // .catch(() => {
+//         //   deleteCookie('accessToken');
+//         //   localStorage.removeItem('refreshToken');
+//         // })
+//         .finally(() => dispatch(userSlice.actions.setAuthChecked(true)));
+//     } else {
+//       dispatch(userSlice.actions.setAuthChecked(true));
+//     }
+//   }
+// );
 
 export const { setAuthChecked } = userSlice.actions;
 export const { getUserSelector, getAuthChecked, authenticatedSelector } =
