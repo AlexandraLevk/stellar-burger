@@ -154,23 +154,6 @@ export const userSlice = createSlice({
   }
 });
 
-// export const checkUserAuth = createAsyncThunk(
-//   'auth/checkUserAuth',
-//   async (_, { dispatch }) => {
-//     if (getCookie('accessToken')) {
-//       getUserApi()
-//         // .then((res) => dispatch(userSlice.actions.setUser(res.user)))
-//         // .catch(() => {
-//         //   deleteCookie('accessToken');
-//         //   localStorage.removeItem('refreshToken');
-//         // })
-//         .finally(() => dispatch(userSlice.actions.setAuthChecked(true)));
-//     } else {
-//       dispatch(userSlice.actions.setAuthChecked(true));
-//     }
-//   }
-// );
-
 export const { setAuthChecked } = userSlice.actions;
 export const { getUserSelector, getAuthChecked, authenticatedSelector } =
   userSlice.selectors;
