@@ -16,9 +16,14 @@ export const checkUserAuth = createAsyncThunk(
     if (getCookie('accessToken')) {
       getUserApi()
         .then((res) => dispatch(userSlice.actions.setUser(res.user)))
-        .finally(() => dispatch(setAuthChecked(true)));
+        .catch((error) => {
+          deleteCookie('accessToken');
+          localStorage.removeItem('refreshToken');
+          throw error;
+        })
+        .finally(() => dispatch(userSlice.actions.setAuthChecked(true)));
     } else {
-      dispatch(setAuthChecked(true));
+      dispatch(userSlice.actions.setAuthChecked(true));
     }
   }
 );
@@ -97,12 +102,6 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(checkUserAuth.rejected, (state, action) => {
-        state.loginUserError = action.error.message;
-        state.isAuthChecked = true;
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
-      })
       .addCase(loginUser.pending, (state) => {
         state.loginUserRequest = true;
         state.loginUserError = null;
