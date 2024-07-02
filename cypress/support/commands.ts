@@ -1,4 +1,17 @@
-/// <reference types="cypress" />
+Cypress.Commands.add('getMain', () => cy.get('[data-cy=main]'));
+Cypress.Commands.add('getBun', () => cy.get('[data-cy=bun]'));
+Cypress.Commands.add('getModal', () => cy.get('#modals'));
+Cypress.Commands.add('getCloseButton', () => cy.get('[data-cy="close-button"]'));
+
+declare namespace Cypress {
+    interface Chainable {
+      getMain(): Chainable<JQuery<HTMLElement>>;
+      getBun(): Chainable<JQuery<HTMLElement>>;
+      getModal(): Chainable<JQuery<HTMLElement>>;
+      getCloseButton(): Chainable<JQuery<HTMLElement>>;
+    }
+  }
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -25,13 +38,3 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
