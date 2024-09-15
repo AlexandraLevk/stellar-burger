@@ -1,4 +1,8 @@
-import { getFeedsApi, getOrderByNumberApi, getOrdersApi } from '@api';
+import {
+  getFeedsApi,
+  getOrderByNumberApi,
+  getOrdersApi
+} from '../utils/burger-api';
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
@@ -20,7 +24,7 @@ type TFeedsState = {
   totalToday: number;
 };
 
-const initialState: TFeedsState = {
+export const initialState: TFeedsState = {
   feeds: [],
   userOrders: [],
   loading: false,

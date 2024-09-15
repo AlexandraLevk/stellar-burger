@@ -5,7 +5,7 @@ import {
   logoutApi,
   registerUserApi,
   updateUserApi
-} from '@api';
+} from '../utils/burger-api';
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { deleteCookie, setCookie, getCookie } from '../utils/cookie';
@@ -65,7 +65,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-type TUserState = {
+export type TUserState = {
   isAuthChecked: boolean;
   isAuthenticated: boolean;
   user: TUser | null;
@@ -74,7 +74,7 @@ type TUserState = {
   loadingData: boolean;
 };
 
-const initialState: TUserState = {
+export const initialState: TUserState = {
   isAuthChecked: false,
   isAuthenticated: false,
   user: null,
@@ -120,6 +120,7 @@ export const userSlice = createSlice({
       })
       .addCase(logoutUser.pending, (state, action) => {
         state.loadingData = true;
+        state.loginUserError = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loadingData = false;
@@ -133,28 +134,32 @@ export const userSlice = createSlice({
       })
       .addCase(registerUser.pending, (state) => {
         state.loadingData = true;
+        state.loginUserError = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loadingData = false;
         state.user = action.payload;
       })
-      .addCase(registerUser.rejected, (state) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.loadingData = false;
+        state.loginUserError = action.error.message;
       })
       .addCase(updateUser.pending, (state) => {
         state.loadingData = true;
+        state.loginUserError = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.loadingData = false;
         state.user = action.payload;
       })
-      .addCase(updateUser.rejected, (state) => {
+      .addCase(updateUser.rejected, (state, action) => {
         state.loadingData = false;
+        state.loginUserError = action.error.message;
       });
   }
 });
 
-export const { setAuthChecked } = userSlice.actions;
+export const { setAuthChecked, setUser } = userSlice.actions;
 export const { getUserSelector, getAuthChecked, authenticatedSelector } =
   userSlice.selectors;
 export default userSlice.reducer;
